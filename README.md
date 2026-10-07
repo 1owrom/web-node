@@ -1,10 +1,10 @@
-# Boda Web
+# Web Node
 
-Proyecto inicial en Next.js para Hostinger Node.js.
+Proyecto web experimental en Next.js preparado para despliegue en Hostinger con Node.js.
 
-## Rutas
-- `/` — portada inicial
-- `/love` — página Love original, servida como HTML real para que Safari ejecute JavaScript
+## Estructura
+- `/` — página principal
+- `/love` — módulo visual independiente
 
 ## Desarrollo local
 ```bash
