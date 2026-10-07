@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<meta name="theme-color" content="#fffafe"/>
+<meta name="color-scheme" content="light"/>
+<title>Love</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --rose:#ffd7e5; --lilac:#e9e2ff; --mint:#d9f5ee; --sky:#cfeaff; --peach:#ffe6cf;
+    --ink:#273041; --soft:#616a7a; --glass:rgba(255,255,255,.68); --border:rgba(255,255,255,.82);
+    --shadow:0 18px 44px rgba(75,64,120,.18);
+    --page-pad:clamp(14px,3vw,24px);
+  }
+
+  *,*::before,*::after{ box-sizing:border-box; }
+  html{
+    min-width:100%; min-height:100%;
+    -webkit-text-size-adjust:100%; text-size-adjust:100%;
+    background:#fffafe;
+  }
+  body{
+    margin:0;
+    width:100%;
+    min-height:100vh;
+    min-height:100svh;
+    min-height:100dvh;
+    display:flex;
+    overflow-x:hidden;
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+    overscroll-behavior-y:contain;
+    font-family:'Poppins',system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;
+    color:var(--ink);
+    background:
+      radial-gradient(1400px 900px at 12% -20%, rgba(233,226,255,.55) 0, transparent 60%),
+      radial-gradient(1200px 800px at 88% 0%,   rgba(255,215,229,.55) 0, transparent 60%),
+      linear-gradient(180deg,#fffafe,#fffefb);
+    padding-top:max(var(--page-pad), env(safe-area-inset-top));
+    padding-right:max(var(--page-pad), env(safe-area-inset-right));
+    padding-bottom:max(var(--page-pad), env(safe-area-inset-bottom));
+    padding-left:max(var(--page-pad), env(safe-area-inset-left));
+  }
+
+  .breath{ position:fixed; inset:0; z-index:-2; display:grid; place-items:center; pointer-events:none; }
+  .breath::before{
+    content:""; width:56vmin; height:56vmin; border-radius:50%;
+    background:
+      radial-gradient(circle at 45% 35%, var(--lilac), transparent 60%),
+      radial-gradient(circle at 60% 68%, var(--rose),  transparent 62%),
+      var(--mint);
+    filter:blur(3px); animation:inhale 7s ease-in-out infinite;
+    box-shadow:0 0 160px rgba(233,226,255,.65); opacity:.46;
+  }
+  @keyframes inhale{ 0%,100%{ transform:scale(1) } 50%{ transform:scale(1.05) } }
+
+  #fx{
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    width:100%; height:100%;
+  }
+  .bouquet{ position:fixed; z-index:-1; opacity:.12; filter:saturate(115%); pointer-events:none; }
+  .bouquet.tl{ top:0; left:0; transform:translate(-10%,-10%) scale(1.1); }
+  .bouquet.br{ right:0; bottom:0; transform:translate(10%,10%) scale(1.1) rotate(180deg); }
+
+  /* Los márgenes automáticos centran cuando cabe y evitan que la parte superior quede inaccesible cuando no cabe. */
+  .wrap{ position:relative; z-index:1; width:min(980px,100%); margin:auto; }
+
+  .header{ display:flex; align-items:center; justify-content:center; margin-bottom:16px; }
+  .ribbon{
+    display:inline-flex; align-items:center; justify-content:center; flex-wrap:wrap;
+    gap:10px; max-width:100%; padding:10px 16px; border-radius:999px;
+    background:linear-gradient(90deg,#ffe7f2,#f0e8ff,#e0f7f3);
+    border:1px solid #ffffffcc; box-shadow:0 10px 28px rgba(0,0,0,.08);
+    font-weight:700; color:#4a5670; text-align:center;
+  }
+  .ribbon .dot{ flex:0 0 auto; width:10px; height:10px; border-radius:50%; background:#ff9ecb; box-shadow:0 0 10px #ff9ecbaa; }
+  .ribbon .dot.r{ background:#9ee9ff; }
+  .ribbon.special{ background:linear-gradient(90deg,#ffe3f1,#e9e2ff,#dcfff4); box-shadow:0 12px 34px rgba(75,64,120,.18); }
+
+  #contador{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; }
+  .unit{
+    position:relative; min-width:0; padding:16px 12px 18px; border-radius:20px;
+    -webkit-backdrop-filter:blur(8px);
+    backdrop-filter:blur(8px);
+    background:var(--glass); border:1px solid var(--border); box-shadow:var(--shadow);
+    transition:transform .25s cubic-bezier(.2,.8,.2,1), box-shadow .25s;
+  }
+  @supports not ((-webkit-backdrop-filter:blur(8px)) or (backdrop-filter:blur(8px))){
+    .unit{ background:rgba(255,255,255,.94); }
+  }
+  @media (hover:hover) and (pointer:fine){
+    .unit:hover{ transform:translateY(-4px); box-shadow:0 22px 48px rgba(75,64,120,.22); }
+  }
+
+  .badge{
+    position:absolute; left:12px; top:-12px; padding:6px 10px; border-radius:999px;
+    max-width:calc(100% - 24px); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+    font-size:.78rem; font-weight:700; color:#4b5568; background:#fff; border:1px solid #ffffffcc;
+    box-shadow:0 8px 22px rgba(0,0,0,.08);
+  }
+  .num{
+    margin-top:8px; font-size:clamp(1.85rem,5vw,2.35rem); font-weight:700; line-height:1;
+    color:#2a3143; letter-spacing:.02em; display:inline-block;
+    font-variant-numeric:tabular-nums; font-feature-settings:"tnum" 1;
+    will-change:filter,text-shadow;
+  }
+  .label{ margin-top:6px; color:var(--soft); font-size:clamp(.84rem,2.8vw,.96rem); overflow-wrap:anywhere; }
+
+  .meta{ margin-top:22px; display:flex; flex-direction:column; gap:8px; align-items:center; justify-content:center; text-align:center; }
+  #total{ font-weight:700; color:#6b7090; }
+  #message{ font-size:clamp(.94rem,3vw,1.06rem); color:#58607a; }
+  .shimmer{
+    animation:shimmer 2.4s linear infinite;
+    background:linear-gradient(90deg,#8b90a5 0%,#a3a9c0 50%,#8b90a5 100%);
+    background-size:200% 100%;
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  @keyframes shimmer{ 0%{ background-position:0% 50% } 100%{ background-position:200% 50% } }
+  footer{ margin-top:10px; font-size:.92rem; color:#8188a2; text-align:center; }
+
+  .noscript{
+    position:fixed; inset:auto 12px 12px; z-index:10; margin:auto; max-width:680px;
+    padding:12px 14px; border-radius:14px; background:#fff; color:#4a5670;
+    border:1px solid rgba(75,64,120,.12); box-shadow:var(--shadow); text-align:center;
+  }
+
+  .tick-rise{ animation:tickRise .28s ease; } @keyframes tickRise{0%{transform:translateY(4px);opacity:.8}100%{transform:translateY(0);opacity:1}}
+  .tick-shift{ animation:tickShift .28s ease; } @keyframes tickShift{0%{transform:translateX(8px);opacity:.8}100%{transform:translateX(0);opacity:1}}
+  .tick-zoom{ animation:tickZoom .24s ease; } @keyframes tickZoom{0%{transform:scale(.98)}50%{transform:scale(1.03)}100%{transform:scale(1)}}
+  .tick-spring{ animation:tickSpring .28s ease; } @keyframes tickSpring{0%{transform:scale(1,1)}50%{transform:scale(1.05,.96)}100%{transform:scale(1,1)}}
+  .tick-soft{ animation:tickSoft .30s ease; } @keyframes tickSoft{0%{letter-spacing:.01em}100%{letter-spacing:.02em}}
+
+  .sec-edge-halo{ animation:edgeHalo .38s ease; }
+  @keyframes edgeHalo{
+    0%{ text-shadow:0 0 0 rgba(207,234,255,0),0 0 0 rgba(207,234,255,0) }
+    50%{ text-shadow:0 0 6px rgba(207,234,255,.70),0 0 12px rgba(207,234,255,.40) }
+    100%{ text-shadow:0 0 0 rgba(207,234,255,0),0 0 0 rgba(207,234,255,0) }
+  }
+
+  .min-glow{ animation:minGlow .50s ease; }
+  @keyframes minGlow{
+    0%{ text-shadow:0 0 0 rgba(255,182,193,0) }
+    40%{ text-shadow:0 0 18px rgba(255,182,193,.55) }
+    100%{ text-shadow:0 0 0 rgba(255,182,193,0) }
+  }
+
+  @media (max-width:760px){
+    #contador{ grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
+  }
+  @media (max-width:360px){
+    #contador{ gap:12px; }
+    .unit{ padding:15px 9px 16px; border-radius:17px; }
+    .badge{ left:8px; max-width:calc(100% - 16px); padding:5px 8px; font-size:.72rem; }
+    .label{ font-size:.8rem; }
+    .ribbon{ gap:7px; padding:9px 12px; font-size:.92rem; }
+  }
+  @media (max-height:520px) and (orientation:landscape){
+    :root{ --page-pad:12px; }
+    .header{ margin-bottom:12px; }
+    #contador{ grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+    .unit{ padding-top:13px; padding-bottom:13px; }
+    .meta{ margin-top:16px; }
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{
+      scroll-behavior:auto !important;
+      animation-duration:.001ms !important;
+      animation-iteration-count:1 !important;
+      transition-duration:.001ms !important;
+    }
+  }
+
+  @media print{
+    body{ min-height:auto; background:#fff; padding:12mm; }
+    #fx,.breath,.bouquet{ display:none !important; }
+    .wrap{ width:100%; }
+    .unit{ -webkit-backdrop-filter:none; backdrop-filter:none; background:#fff; box-shadow:none; border:1px solid #ddd; }
+  }
+</style>
+</head>
+<body>
+  <noscript><div class="noscript">Esta página necesita JavaScript para actualizar el contador y las animaciones. Ábrela en un navegador moderno como Safari, Chrome, Edge o Firefox.</div></noscript>
+  <div class="breath" aria-hidden="true"></div>
+  <canvas id="fx" aria-hidden="true"></canvas>
+
+  <!-- Ramilletes de flores -->
+  <svg class="bouquet tl" aria-hidden="true" focusable="false" width="260" height="220" viewBox="0 0 260 220" fill="none">
+    <circle cx="60" cy="80" r="26" fill="#FF9FC3"/>
+    <circle cx="45" cy="70" r="18" fill="#FFB8D2"/>
+    <circle cx="80" cy="68" r="18" fill="#FFCBE0"/>
+    <circle cx="70" cy="102" r="20" fill="#F2D6FF"/>
+    <ellipse cx="110" cy="120" rx="16" ry="26" fill="#D9F5EE"/>
+    <ellipse cx="130" cy="134" rx="10" ry="18" fill="#CFEAFF"/>
+  </svg>
+  <svg class="bouquet br" aria-hidden="true" focusable="false" width="260" height="220" viewBox="0 0 260 220" fill="none">
+    <circle cx="200" cy="140" r="26" fill="#FF9FC3"/>
+    <circle cx="215" cy="150" r="18" fill="#FFB8D2"/>
+    <circle cx="180" cy="152" r="18" fill="#FFCBE0"/>
+    <circle cx="190" cy="118" r="20" fill="#F2D6FF"/>
+    <ellipse cx="150" cy="100" rx="16" ry="26" fill="#D9F5EE"/>
+    <ellipse cx="130" cy="86"  rx="10" ry="18" fill="#CFEAFF"/>
+  </svg>
+
+  <div class="wrap">
+    <div class="header">
+      <div id="ribbon" class="ribbon">
+        <span class="dot"></span>Disfrutando el tiempo a tu lado<span class="dot r"></span>
+      </div>
+    </div>
+
+    <div id="contador" aria-label="Tiempo juntos">
+      <div class="unit" data-u="years">
+        <div class="badge">Años</div>
+        <div class="num" id="years">0</div>
+        <div class="label">Acumulando historias</div>
+      </div>
+      <div class="unit" data-u="months">
+        <div class="badge">Meses</div>
+        <div class="num" id="months">0</div>
+        <div class="label">Capítulos suaves a tu lado</div>
+      </div>
+      <div class="unit" data-u="days">
+        <div class="badge">Días</div>
+        <div class="num" id="days">0</div>
+        <div class="label">Pasos pequeños aprendiendo</div>
+      </div>
+      <div class="unit" data-u="hours">
+        <div class="badge">Horas</div>
+        <div class="num" id="hours">0</div>
+        <div class="label">Planes casuales en calma</div>
+      </div>
+      <div class="unit" data-u="minutes">
+        <div class="badge">Minutos</div>
+        <div class="num" id="minutes">0</div>
+        <div class="label">Miradas compartidas</div>
+      </div>
+      <div class="unit" data-u="seconds">
+        <div class="badge">Segundos</div>
+        <div class="num" id="seconds">0</div>
+        <div class="label">Instantes únicos</div>
+      </div>
+    </div>
+
+    <div class="meta">
+      <div id="total"></div>
+      <div id="message"></div>
+      <footer>¡Sonríe, preciosa! Que el Señor se lució contigo ღ</footer>
+    </div>
+  </div>
+
+<script>
+  const inicio = new Date(2024,10,7,0,0,0);
+
+  /* ---------- Canvas partículas + corazones ---------- */
+  const cnv = document.getElementById('fx');
+  const ctx = cnv && cnv.getContext ? cnv.getContext('2d') : null;
+  const motionQuery = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
+  let reduceMotion = Boolean(motionQuery && motionQuery.matches);
+  let W = 1, H = 1, DPR = 1, particles = [], density = 0, is07 = false;
+  let lastFxTime = performance.now ? performance.now() : Date.now();
+
+  const COLORS = {
+    petalRose:  'rgba(255,215,229,0.82)',
+    petalLilac: 'rgba(233,226,255,0.82)',
+    leafMint:   'rgba(217,245,238,0.78)',
+    sparkleA:   'rgba(207,234,255,0.9)',
+    sparkleB:   'rgba(255,230,207,0.9)',
+    bloomPink:  'rgba(255,159,195,0.95)',
+    bloomLav:   'rgba(198,179,255,0.95)',
+    heart:      'rgba(255,0,0,0.95)',
+    heartAlt:   'rgba(198,179,255,0.95)'
+  };
+
+  function resize(){
+    if(!cnv || !ctx) return;
+    W = Math.max(1, Math.round(window.innerWidth || document.documentElement.clientWidth || 1));
+    H = Math.max(1, Math.round(window.innerHeight || document.documentElement.clientHeight || 1));
+    DPR = Math.min(Math.max(window.devicePixelRatio || 1, 1), 2);
+    cnv.width = Math.round(W * DPR);
+    cnv.height = Math.round(H * DPR);
+    cnv.style.width = W + 'px';
+    cnv.style.height = H + 'px';
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    rebuild();
+  }
+  let resizeTimer;
+  function scheduleResize(){
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(resize, 80);
+  }
+  addEventListener('resize', scheduleResize, {passive:true});
+  addEventListener('orientationchange', scheduleResize, {passive:true});
+  if(window.visualViewport) visualViewport.addEventListener('resize', scheduleResize, {passive:true});
+
+  function rebuild(){
+    const base = Math.max(6, Math.floor(W * H / 21000));
+    const motionFactor = reduceMotion ? 0.28 : 1;
+    density = Math.max(4, Math.round((base + (is07 ? Math.ceil(base*0.35) : 0)) * motionFactor));
+    particles = [];
+    for(let i=0;i<density;i++) particles.push(makeParticle());
+  }
+
+  function makeParticle(){
+    const t = Math.random();
+    let kind;
+    if(t < 0.22) kind = 'petalRose';
+    else if(t < 0.44) kind = 'petalLilac';
+    else if(t < 0.64) kind = 'leafMint';
+    else if(t < 0.80) kind = (Math.random()<.5?'sparkleA':'sparkleB');
+    else kind = (Math.random()<.5?'bloomPink':'bloomLav');
+
+    const size =
+      kind.startsWith('petal') ? (10 + Math.random()*12) :
+      kind === 'leafMint' ? (8 + Math.random()*10) :
+      kind.startsWith('bloom') ? (12 + Math.random()*16) :
+      (2 + Math.random()*3);
+
+    const vy = -(.15 + Math.random()*0.35) * (kind.includes('sparkle') ? 0.8 : 1);
+    const vx = (Math.random()-.5)*.28;
+
+    return {
+      kind, x: Math.random()*W, y: Math.random()*H, vx, vy, size,
+      rot: Math.random()*Math.PI*2, vr: (Math.random()-.5)*0.02,
+      wob: Math.random()*Math.PI*2, wobSp: .008 + Math.random()*0.018,
+      twinkle: Math.random()*Math.PI*2, life: 9999
+    };
+  }
+
+  // Corazón que sube //
+  function spawnHeartFromBottom(targetEl, alt = false){
+    const r = targetEl.getBoundingClientRect();
+    const cx = r.left + r.width/2 + window.scrollX; // Mantener el "ancla" visual en el bloque de minutos
+    const startX = cx + (Math.random() - 0.5) * 40; // Pequeño desvío horizontal
+    const startY = H + 30;                          // Fuera de la pantalla por abajo
+
+    particles.push({
+      kind: alt ? 'heartAlt' : 'heart',
+      x: startX,
+      y: startY,
+      vx: (Math.random() - .5) * 0.26,              // Deriva lateral sutil
+      vy: -(.38 + Math.random() * 0.22),            // Velocidad hacia arriba (un poco más rápida que pétalos)
+      size: 14 + Math.random() * 6,                 // Mediano
+      rot: (Math.random() - .5) * 0.5,
+      vr:  (Math.random() - .5) * 0.025,
+      wob: Math.random() * Math.PI * 2,
+      wobSp: .010 + Math.random() * 0.016,          // Mismo "wobble" que las flores
+      age: 0,
+      life: 540                                      // ~9s de vida para cruzar toda la pantalla
+    });
+  }
+
+  function drawPetal(x,y,r,rot,fill){
+    ctx.save(); ctx.translate(x,y); ctx.rotate(rot);
+    ctx.beginPath(); ctx.ellipse(0,0, r*0.7, r, 0, 0, Math.PI*2);
+    ctx.moveTo(0, -r); ctx.quadraticCurveTo(r*0.2, -r*0.3, 0, -r*0.1);
+    ctx.closePath(); ctx.fillStyle = fill; ctx.fill(); ctx.restore();
+  }
+  function drawLeaf(x,y,r,rot,fill){
+    ctx.save(); ctx.translate(x,y); ctx.rotate(rot);
+    ctx.beginPath(); ctx.ellipse(0,0, r*0.55, r*0.9, 0, 0, Math.PI*2);
+    ctx.fillStyle = fill; ctx.fill(); ctx.restore();
+  }
+  function drawSparkle(x,y,phase,color){
+    const a = 0.65 + 0.35*Math.sin(phase*2);
+    ctx.save(); ctx.globalAlpha = a; ctx.translate(x,y);
+    ctx.beginPath(); ctx.moveTo(0,-2); ctx.lineTo(0,2); ctx.moveTo(-2,0); ctx.lineTo(2,0);
+    ctx.strokeStyle = color; ctx.lineWidth = 1.2; ctx.stroke(); ctx.restore();
+  }
+  function drawBloom(x,y,r,rot,color){
+    ctx.save(); ctx.translate(x,y); ctx.rotate(rot);
+    for(let i=0;i<5;i++){
+      const a = (i/5)*Math.PI*2;
+      const px = Math.cos(a)*r*0.8, py = Math.sin(a)*r*0.8;
+      ctx.beginPath(); ctx.ellipse(px, py, r*0.55, r*0.8, a, 0, Math.PI*2);
+      ctx.fillStyle = color; ctx.globalAlpha = 0.9; ctx.fill();
+    }
+    ctx.globalAlpha = 0.9; ctx.beginPath();
+    ctx.arc(0,0, r*0.35, 0, Math.PI*2);
+    ctx.fillStyle = 'rgba(255,243,220,.95)'; ctx.fill();
+    ctx.restore();
+  }
+
+  function drawHeartParticle(p, color){
+    const a = Math.max(0, 1 - p.age / p.life);
+    ctx.save();
+    ctx.globalAlpha = a;
+    ctx.translate(p.x, p.y);
+    ctx.rotate(p.rot);
+    const r = p.size;
+    ctx.fillStyle = color;
+    ctx.shadowColor = color;
+    ctx.shadowBlur = 12;
+
+    ctx.beginPath();
+    ctx.moveTo(0, -r * 0.2);
+    ctx.bezierCurveTo(r, -r,   r * 1.1,  r * 0.4,  0,  r);
+    ctx.bezierCurveTo(-r*1.1,  r * 0.4, -r,      -r,  0, -r * 0.2);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.restore();
+    ctx.shadowBlur = 0;
+  }
+
+  function fxTick(now){
+    if(!ctx) return;
+    const current = typeof now === 'number' ? now : (performance.now ? performance.now() : Date.now());
+    const dt = reduceMotion ? 0 : Math.min(2.5, Math.max(.25, (current - lastFxTime) / 16.6667 || 1));
+    lastFxTime = current;
+
+    ctx.clearRect(0,0,W,H);
+    for(let i=particles.length-1;i>=0;i--){
+      const p = particles[i];
+      if(p.kind==='heart' || p.kind==='heartAlt') p.age += dt;
+      else p.life -= dt;
+
+      p.wob += p.wobSp * dt;
+      p.rot += p.vr * dt;
+      p.x += (p.vx + Math.sin(p.wob)*.15) * dt;
+      p.y += p.vy * dt;
+
+      if(!(p.kind==='heart' || p.kind==='heartAlt') && p.y < -30){
+        p.y = H + 30;
+        p.x = Math.random()*W;
+      }
+
+      switch(p.kind){
+        case 'petalRose':  drawPetal(p.x,p.y,p.size,p.rot,COLORS.petalRose); break;
+        case 'petalLilac': drawPetal(p.x,p.y,p.size,p.rot,COLORS.petalLilac); break;
+        case 'leafMint':   drawLeaf(p.x,p.y,p.size,p.rot,COLORS.leafMint); break;
+        case 'sparkleA':   p.twinkle += .08*dt; drawSparkle(p.x,p.y,p.twinkle,COLORS.sparkleA); break;
+        case 'sparkleB':   p.twinkle += .08*dt; drawSparkle(p.x,p.y,p.twinkle,COLORS.sparkleB); break;
+        case 'bloomPink':  drawBloom(p.x,p.y,p.size,p.rot,COLORS.bloomPink); break;
+        case 'bloomLav':   drawBloom(p.x,p.y,p.size,p.rot,COLORS.bloomLav); break;
+        case 'heart':
+          drawHeartParticle(p,COLORS.heart);
+          if(p.age >= p.life || p.y < -40) particles.splice(i,1);
+          break;
+        case 'heartAlt':
+          drawHeartParticle(p,COLORS.heartAlt);
+          if(p.age >= p.life || p.y < -40) particles.splice(i,1);
+          break;
+      }
+    }
+
+    if(!reduceMotion) requestAnimationFrame(fxTick);
+  }
+
+  function restartFx(){
+    if(!ctx) return;
+    lastFxTime = performance.now ? performance.now() : Date.now();
+    rebuild();
+    requestAnimationFrame(fxTick);
+  }
+
+  if(motionQuery){
+    const onMotionChange = e => {
+      reduceMotion = e.matches;
+      restartFx();
+    };
+    if(motionQuery.addEventListener) motionQuery.addEventListener('change', onMotionChange);
+    else if(motionQuery.addListener) motionQuery.addListener(onMotionChange);
+  }
+
+  /* ---------- Contador ---------- */
+  const $ = id => document.getElementById(id);
+  const years=$('years'), months=$('months'), days=$('days'),
+        hours=$('hours'), minutes=$('minutes'), seconds=$('seconds');
+  const totalEl=$('total'), messageEl=$('message'), ribbon=$('ribbon');
+
+  function setNum(el, val, tickClass){
+    const s = String(val);
+    if(el.textContent !== s){
+      el.textContent = s;
+      if(tickClass){ el.classList.remove(tickClass); void el.offsetWidth; el.classList.add(tickClass); }
+    }
+  }
+  function pulse(el, cls, ms){
+    el.classList.remove(cls); void el.offsetWidth;
+    el.classList.add(cls);
+    setTimeout(()=>el.classList.remove(cls), ms);
+  }
+
+  function actualizar(){
+    const ahora = new Date();
+    is07 = (ahora.getDate() === 7);
+
+    let A = ahora.getFullYear() - inicio.getFullYear();
+    let M = ahora.getMonth()    - inicio.getMonth();
+    let D = ahora.getDate()     - inicio.getDate();
+    let Hh= ahora.getHours()    - inicio.getHours();
+    let N = ahora.getMinutes()  - inicio.getMinutes();
+    let S = ahora.getSeconds()  - inicio.getSeconds();
+
+    if(S<0){ S+=60; N--; }
+    if(N<0){ N+=60; Hh--; }
+    if(Hh<0){ Hh+=24; D--; }
+    if(D<0){ const mesAnterior = new Date(ahora.getFullYear(), ahora.getMonth(), 0); D += mesAnterior.getDate(); M--; }
+    if(M<0){ M+=12; A--; }
+
+    const totalDias = Math.floor((ahora - inicio) / 86400000);
+
+    setNum(years,   A,  'tick-zoom');
+    setNum(months,  M,  'tick-shift');
+    setNum(days,    D,  'tick-rise');
+    setNum(hours,   Hh, 'tick-spring');
+
+    // Minutos: glow + corazón desde ABAJO (sin mover el número) //
+    const prevMin = actualizar.prevMin;
+    setNum(minutes, N, 'tick-soft');
+    if(prevMin !== undefined && prevMin !== N){
+      pulse(minutes, 'min-glow', 520);
+      // Nuevo: un corazón mediano que sube desde abajo //
+      spawnHeartFromBottom(minutes, Math.random()<.5);
+    }
+    actualizar.prevMin = N;
+
+    // Segundos: SOLO halo de bordes, sin movimiento //
+    const prevSec = actualizar.prevSec;
+    setNum(seconds, S);
+    if(prevSec !== undefined && prevSec !== S){
+      pulse(seconds, 'sec-edge-halo', 400);
+    }
+    actualizar.prevSec = S;
+
+    totalEl.textContent = `${totalDias} día${totalDias===1?'':'s'} amándote`;
+
+    if(is07){
+      messageEl.textContent = "✧ Un mes más a tu lado, mi amor ¡Gloria a Dios por esto! ✧";
+      messageEl.classList.add('shimmer'); ribbon.classList.add('special');
+    }else{
+      messageEl.textContent = "Pensando en ti: En lo mucho que me encanta perderme en tu mirada";
+      messageEl.classList.remove('shimmer'); ribbon.classList.remove('special');
+    }
+
+    if(typeof actualizar.was07 === 'undefined' || actualizar.was07 !== is07){
+      actualizar.was07 = is07; rebuild();
+    }
+  }
+
+  resize();
+  if(ctx) restartFx();
+  else if(cnv) cnv.hidden = true;
+
+  actualizar();
+  setInterval(actualizar, 1000);
+  document.addEventListener('visibilitychange', () => {
+    if(!document.hidden) actualizar();
+  });
+
+  // ► Prueba manual: descomenta para ver un corazón inmediato desde abajo
+  // spawnHeartFromBottom(minutes, Math.random()<.5);
+</script>
+</body>
+</html>
